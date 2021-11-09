@@ -1,0 +1,197 @@
+Task 1(a) :Creating Hierarchial Depositories
+
+ak@ak:~$ hdfs dfs -put /home/ak/datasets/employee.csv  /vai
+ak@ak:~$ hdfs dfs -mkdir -p /a/b/c
+ak@ak:~$ hdfs dfs -copyFromLocal /home/ak/datasets/emp.csv  /a/b/c
+ak@ak:~$ hdfs dfs -setrep 1  /a/b/c/emp.csv
+Replication 1 set: /a/b/c/emp.csv
+ak@ak:~$ hdfs dfs -rm /a/b/c/emp.csv
+Deleted /a/b/c/emp.csv
+ak@ak:~$ hdfs dfs -put /home/ak/hadoop.zip  /a/b/c
+ak@ak:~$  hdfs dfs -appendToFile /home/ak/hadoop.zip  /a/b/c/hadoop.zip
+ak@ak:~$ hdfs dfs -put /home/ak/datasets/emp.csv  /a/b/c
+
+Task 1(b):Creating table Employee and loading data from local and hdfs source
+
+hiive> create table employee(empno INT, ename STRING, sal INT) row format delimited fields terminated by ',' stored as textfile;
+OK
+Time taken: 0.102 seconds
+hive> load data local inpath '/home/ak/datasets/emp.csv' into table employee;
+Loading data to table ofsa.employee
+OK
+Time taken: 0.267 seconds
+
+
+hive> desc extended employee;
+OK
+empno               	int                 	                    
+ename               	string              	                    
+sal                 	int                 	                    
+	 	
+Detailed Table Information	Table(tableName:employee, dbName:ofsa, owner:ak, createTime:1636377220, lastAccessTime:0, retention:0, sd:StorageDescriptor(cols:[FieldSchema(name:empno, type:int, comment:null), FieldSchema(name:ename, type:string, comment:null), FieldSchema(name:sal, type:int, comment:null)], location:hdfs://localhost:9000/user/hive/warehouse/ofsa.db/employee, inputFormat:org.apache.hadoop.mapred.TextInputFormat, outputFormat:org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat, compressed:false, numBuckets:-1, serdeInfo:SerDeInfo(name:null, serializationLib:org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe, parameters:{serialization.format=,, field.delim=,}), bucketCols:[], sortCols:[], parameters:{}, skewedInfo:SkewedInfo(skewedColNames:[], skewedColValues:[], skewedColValueLocationMaps:{}), storedAsSubDirectories:false), partitionKeys:[], parameters:{totalSize=39, numRows=0, rawDataSize=0, numFiles=1, transient_lastDdlTime=1636377382, bucketing_version=2}, viewOriginalText:null, viewExpandedText:null, tableType:MANAGED_TABLE, rewriteEnabled:false, catName:hive, ownerType:USER)	
+Time taken: 0.15 seconds, Fetched: 5 row(s)
+
+
+
+
+
+hive> Select * from employee;
+OK
+111	zzz	8000
+111	aaa	8888
+121	bbb	8000
+Time taken: 0.224 seconds, Fetched: 3 row(s)
+
+hive> insert into employee values(131,'ccc',9000);
+Query ID = ak_20211108185302_66c57762-4131-4fff-a397-e63cfca9d2db
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1635803745015_0002, Tracking URL = http://ak:8088/proxy/application_1635803745015_0002/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1635803745015_0002
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2021-11-08 18:53:09,381 Stage-1 map = 0%,  reduce = 0%
+2021-11-08 18:53:13,524 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.35 sec
+2021-11-08 18:53:18,628 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 2.54 sec
+MapReduce Total cumulative CPU time: 2 seconds 540 msec
+Ended Job = job_1635803745015_0002
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to directory hdfs://localhost:9000/user/hive/warehouse/ofsa.db/employee/.hive-staging_hive_2021-11-08_18-53-02_064_40753206215812351-1/-ext-10000
+Loading data to table ofsa.employee
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 2.54 sec   HDFS Read: 16296 HDFS Write: 285 SUCCESS
+Total MapReduce CPU Time Spent: 2 seconds 540 msec
+OK
+Time taken: 17.91 seconds
+hive> Select * from employee;
+OK
+131	ccc	9000
+111	zzz	8000
+111	aaa	8888
+121	bbb	8000
+Time taken: 0.142 seconds, Fetched: 4 row(s)
+
+
+
+
+
+
+hive> Select count(*) from employee;
+Query ID = ak_20211108185831_c84d96bb-1339-4309-b8ee-c2f0608faf64
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1635803745015_0003, Tracking URL = http://ak:8088/proxy/application_1635803745015_0003/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1635803745015_0003
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2021-11-08 18:58:36,785 Stage-1 map = 0%,  reduce = 0%
+2021-11-08 18:58:40,887 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.18 sec
+2021-11-08 18:58:46,008 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 2.38 sec
+MapReduce Total cumulative CPU time: 2 seconds 380 msec
+Ended Job = job_1635803745015_0003
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 2.38 sec   HDFS Read: 12347 HDFS Write: 101 SUCCESS
+Total MapReduce CPU Time Spent: 2 seconds 380 msec
+OK
+4
+Time taken: 15.3 seconds, Fetched: 1 row(s)
+
+hive> Select * from employee where empno=131;
+OK
+131	ccc	9000
+Time taken: 0.247 seconds, Fetched: 1 row(s)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+hive> Select sum(sal) from employee;
+Query ID = ak_20211108190008_8d05c88f-496d-4f17-bce3-73c60cae8160
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1635803745015_0004, Tracking URL = http://ak:8088/proxy/application_1635803745015_0004/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1635803745015_0004
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2021-11-08 19:00:12,282 Stage-1 map = 0%,  reduce = 0%
+2021-11-08 19:00:17,395 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.19 sec
+2021-11-08 19:00:21,483 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 2.26 sec
+MapReduce Total cumulative CPU time: 2 seconds 260 msec
+Ended Job = job_1635803745015_0004
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 2.26 sec   HDFS Read: 12595 HDFS Write: 105 SUCCESS
+Total MapReduce CPU Time Spent: 2 seconds 260 msec
+OK
+33888
+Time taken: 13.911 seconds, Fetched: 1 row(s)
+
+hive> Select empno,SUM(sal) from employee group by empno;
+Query ID = ak_20211108190220_cd84153d-7553-4fa7-8e80-c3bf0d10983f
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1635803745015_0005, Tracking URL = http://ak:8088/proxy/application_1635803745015_0005/
+Kill Command = /home/ak/hadoop-2.10.1/bin/mapred job  -kill job_1635803745015_0005
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2021-11-08 19:02:25,990 Stage-1 map = 0%,  reduce = 0%
+2021-11-08 19:02:30,101 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.06 sec
+2021-11-08 19:02:35,206 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 2.21 sec
+MapReduce Total cumulative CPU time: 2 seconds 210 msec
+Ended Job = job_1635803745015_0005
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 2.21 sec   HDFS Read: 13067 HDFS Write: 151 SUCCESS
+Total MapReduce CPU Time Spent: 2 seconds 210 msec
+OK
+111	16888
+121	8000
+131	9000
+Time taken: 15.281 seconds, Fetched: 3 row(s)
+
+hive> create table employee1(empno INT, ename STRING, sal INT) row format delimited fields terminated by ',' stored as textfile;
+OK
+Time taken: 0.098 seconds
+hive> load data inpath '/vai/emp.csv' into table employee1;
+Loading data to table ofsa.employee1
+OK
+Time taken: 0.243 seconds
