@@ -116,24 +116,6 @@ OK
 Time taken: 0.247 seconds, Fetched: 1 row(s)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 hive> Select sum(sal) from employee;
 Query ID = ak_20211108190008_8d05c88f-496d-4f17-bce3-73c60cae8160
 Total jobs = 1
